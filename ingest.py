@@ -53,6 +53,13 @@ def clean_document(text: str) -> str:
     # Normalize line endings
     text = text.replace("\r\n", "\n").replace("\r", "\n")
 
+    # Strip document header lines (title + "Source: ..." attribution) so they
+    # don't dominate the first chunk and bury the actual content in its embedding.
+    # Matches "Westbrook University ..." title lines and "Source: ..." lines.
+    text = re.sub(r"^Westbrook University.*$", "", text, flags=re.MULTILINE)
+    text = re.sub(r"^Westbrook Area.*$", "", text, flags=re.MULTILINE)
+    text = re.sub(r"^Source:.*$", "", text, flags=re.MULTILINE)
+
     # Remove lines that are purely dashes or equals (decorative separators)
     text = re.sub(r"^\s*[-=]{3,}\s*$", "", text, flags=re.MULTILINE)
 
